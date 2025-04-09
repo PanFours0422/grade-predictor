@@ -1,0 +1,157 @@
+/* 基础样式 */
+body {
+  padding: 0;
+  margin: 0;
+  background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+  min-height: 100vh;
+}
+
+/* 导航栏样式 */
+.navbar {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 卡片样式 */
+.card {
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+/* 表格样式 */
+.table {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.table thead th {
+  background-color: #4b6cb7;
+  color: white;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* 状态颜色样式 */
+.status-low {
+  color: #dc3545 !important;  /* 红色 - 用于"低投入性"和"不及格" */
+  font-weight: bold;
+  background-color: rgba(220, 53, 69, 0.1);
+}
+
+.status-mid-low {
+  color: #fd7e14 !important;  /* 橙色 - 用于"中低投入性" */
+  font-weight: bold;
+  background-color: rgba(253, 126, 20, 0.1);
+}
+
+.status-medium {
+  color: #ffc107 !important;  /* 黄色 - 用于"中投入性" */
+  font-weight: bold;
+  background-color: rgba(255, 193, 7, 0.1);
+}
+
+.status-mid-high {
+  color: #20c997 !important;  /* 青色 - 用于"中高投入性" */
+  font-weight: bold;
+  background-color: rgba(32, 201, 151, 0.1);
+}
+
+.status-high {
+  color: #6f42c1 !important;  /* 紫色 - 用于"高投入性"和"优" */
+  font-weight: bold;
+  background-color: rgba(111, 66, 193, 0.1);
+}
+
+/* 按钮样式 */
+.btn-primary {
+  background: #4b6cb7;
+  border: none;
+  padding: 10px 20px;
+  transition: all 0.3s;
+}
+
+.btn-primary:hover {
+  background: #182848;
+  transform: translateY(-2px);
+}
+
+/* 模态框样式 */
+.modal-content {
+  border-radius: 15px;
+}
+
+/* 表单控件样式 */
+.form-control {
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  padding: 10px 15px;
+}
+
+.form-control:focus {
+  border-color: #4b6cb7;
+  box-shadow: 0 0 0 0.2rem rgba(75, 108, 183, 0.25);
+}
+
+/* 警告消息样式 */
+.alert {
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+/* 图表卡片样式 */
+.chart-container {
+  margin-top: 2rem;
+}
+
+.chart-card {
+  background: white;
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+.chart-title {
+  color: #4b6cb7;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* 折叠按钮样式 */
+.collapse-btn {
+  margin: 1rem 0;
+  width: 200px;
+}
+
+.collapse-btn i {
+  transition: transform 0.3s ease;
+}
+
+.collapse-btn[aria-expanded="true"] i {
+  transform: rotate(180deg);
+}
+
+/* 图表容器样式 */
+.chart-wrapper {
+  position: relative;
+  height: 300px;
+  width: 100%;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .chart-wrapper {
+    height: 250px;
+  }
+
+  .chart-card {
+    margin-bottom: 1rem;
+  }
+}

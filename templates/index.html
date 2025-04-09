@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>成绩预测系统</title>
+    <script src="/static/jquery/jquery.min.js"></script>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css" />
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/static/style.css" />
+    <link rel="stylesheet" href="/css/all.min.css">
+    <script src="/static/js/chart.js"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
+      <a class="navbar-brand me-0 active" href="#">
+        <i class="fas fa-chart-line me-2"></i>成绩预测系统
+      </a>
+    </nav>
+
+    <main class="d-flex flex-column gap-4 p-4 align-items-center">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-6">
+            <h2 class="text-center mb-4">欢迎使用成绩预测系统</h2>
+            <div class="d-flex flex-column gap-4">
+              <!-- 单人预测卡片 -->
+              <div class="card">
+                <div class="card-body text-center">
+                  <i class="fas fa-user-graduate fa-3x mb-3 text-primary"></i>
+                  <h5 class="card-title">单人成绩预测</h5>
+                  <p class="card-text">输入单个学生的数据，预测其成绩等级和投入性。</p>
+                  <a href="/single" class="btn btn-primary">
+                    <i class="fas fa-arrow-right me-2"></i>开始预测
+                  </a>
+                </div>
+              </div>
+              
+              <!-- 多人预测卡片 -->
+              <div class="card">
+                <div class="card-body text-center">
+                  <i class="fas fa-users fa-3x mb-3 text-success"></i>
+                  <h5 class="card-title">多人成绩预测</h5>
+                  <p class="card-text">上传Excel文件，批量预测多个学生的成绩等级和投入性。</p>
+                  <a href="/batch" class="btn btn-success">
+                    <i class="fas fa-arrow-right me-2"></i>开始预测
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>单人成绩预测</title>
+    <script src="/static/jquery/jquery.min.js"></script>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css" />
+    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="/static/style.css" />
+    <link rel="stylesheet" href="/css/all.min.css">
+    <script src="/static/js/chart.js"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
+      <a class="navbar-brand me-0" href="/">
+        <i class="fas fa-home me-2"></i>首页
+      </a>
+      <a class="navbar-brand me-0 active" href="#">
+        <i class="fas fa-user-graduate me-2"></i>单人成绩预测
+      </a>
+    </nav>
+
+    <main class="d-flex flex-column gap-4 p-4 align-items-center">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-8">
+            <!-- 预测表单 -->
+            <div class="card mb-4">
+              <div class="card-body">
+                <h5 class="card-title mb-4">
+                  <i class="fas fa-user-graduate me-2"></i>输入学生信息
+                </h5>
+                <form class="row g-3" method="post" action="/single">
+                  <div class="form-group">
+                    <label class="form-label" for="courseName">
+                      <i class="fas fa-user me-2"></i>学生姓名
+                    </label>
+                    <input type="text" class="form-control" id="courseName" name="name" required />
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="audio">
+                      <i class="fas fa-video me-2"></i>课程音视频 (100%)
+                    </label>
+                    <input type="number" class="form-control" id="audio" name="audio" required min="0" max="100" />
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="learningTime">
+                      <i class="fas fa-clock me-2"></i>章节学习次数 (100%)
+                    </label>
+                    <input type="number" class="form-control" id="learningTime" name="learning_time" required min="0" max="100" />
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="assignment">
+                      <i class="fas fa-tasks me-2"></i>作业 (100%)
+                    </label>
+                    <input type="number" class="form-control" id="assignment" name="assignment" required min="0" max="100" />
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="signTime">
+                      <i class="fas fa-signature me-2"></i>签到 (100%)
+                    </label>
+                    <input type="number" class="form-control" id="signTime" name="sign_time" required min="0" max="100" />
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="courseInteract">
+                      <i class="fas fa-comments me-2"></i>课程互动 (100%)
+                    </label>
+                    <input type="number" class="form-control" id="courseInteract" name="course_interact" required min="0" max="100" />
+                  </div>
+
+                  <div>
+                    <button type="submit" class="btn btn-primary w-100">
+                      <i class="fas fa-paper-plane me-2"></i>提交
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- 结果显示 -->
+            {% if head_list %}
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title mb-4">
+                  <i class="fas fa-chart-bar me-2"></i>预测结果
+                </h5>
+                <div class="table-responsive">
+                  <table class="table table-bordered table-hover">
+                    <thead>
+                      <tr>
+                        <th style="text-align: center">序号</th>
+                        {# 过滤掉“投入性解释”这一列 #}
+                        {% for head in head_list if head != '投入性解释' %}
+                          <th style="text-align: center">{{ head }}</th>
+                        {% endfor %}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for results in result_list %}
+                      <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ results[0] }}</td>
+                        <td>{{ results[1] }}</td>
+                        <td>{{ results[2] }}</td>
+                        <td>{{ results[3] }}</td>
+                        <td>{{ results[4] }}</td>
+                        <td>{{ results[5] }}</td>
+                        <!-- 投入性列，添加 tooltip 显示解释 -->
+                        <td title="{{ results[7] }}" data-bs-toggle="tooltip" data-bs-placement="top">
+                          {% if results[6] =='低投入性' %}
+                            <span class="status-low">{{ results[6] }}</span>
+                          {% elif results[6] =='中低投入性' %}
+                            <span class="status-mid-low">{{ results[6] }}</span>
+                          {% elif results[6] =='中投入性' %}
+                            <span class="status-medium">{{ results[6] }}</span>
+                          {% elif results[6] =='中高投入性' %}
+                            <span class="status-mid-high">{{ results[6] }}</span>
+                          {% else %}
+                            <span class="status-high">{{ results[6] }}</span>
+                          {% endif %}
+                        </td>
+                        <td>{{ results[8] }}</td>
+                        <td>
+                          {% if results[9] =='不及格' %}
+                            <span class="status-low">{{ results[9] }}</span>
+                          {% elif results[9] == '及格' %}
+                            {{ results[9] }}
+                          {% elif results[9] =='良' %}
+                            <span class="status-medium">{{ results[9] }}</span>
+                          {% else %}
+                            <span class="status-high">{{ results[9] }}</span>
+                          {% endif %}
+                        </td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- 统计图表 -->
+                <div class="row mt-4">
+                  <div class="col-md-6">
+                    <div class="chart-card">
+                      <h5 class="chart-title">
+                        <i class="fas fa-chart-pie me-2"></i>投入性分布
+                      </h5>
+                      <div class="chart-wrapper">
+                        <canvas id="investmentChart"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="chart-card">
+                      <h5 class="chart-title">
+                        <i class="fas fa-chart-pie me-2"></i>成绩等级分布
+                      </h5>
+                      <div class="chart-wrapper">
+                        <canvas id="gradeChart"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- 初始化 Bootstrap tooltip -->
+    <script>
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+      });
+    </script>
+
+    <!-- 图表初始化脚本 -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        {% if stats %}
+          const statsData = {{ stats|safe }};
+
+          // 投入性饼图
+          new Chart(document.getElementById('investmentChart'), {
+            type: 'pie',
+            data: {
+              labels: Object.keys(statsData.investment),
+              datasets: [{
+                data: Object.values(statsData.investment),
+                backgroundColor: ['#dc3545', '#fd7e14', '#ffc107', '#20c997', '#6f42c1'],
+                borderWidth: 1
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  position: 'bottom'
+                }
+              }
+            }
+          });
+
+          // 成绩等级饼图
+          new Chart(document.getElementById('gradeChart'), {
+            type: 'pie',
+            data: {
+              labels: Object.keys(statsData.grade),
+              datasets: [{
+                data: Object.values(statsData.grade),
+                backgroundColor: ['#dc3545', '#ffc107', '#198754', '#6f42c1'],
+                borderWidth: 1
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  position: 'bottom'
+                }
+              }
+            }
+          });
+        {% endif %}
+      });
+    </script>
+  </body>
+</html>

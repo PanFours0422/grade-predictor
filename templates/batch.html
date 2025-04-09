@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>多人成绩预测</title>
+    <script src="/static/jquery/jquery.min.js"></script>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css" />
+    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="/static/style.css" />
+    <link rel="stylesheet" href="/css/all.min.css">
+    <script src="/static/js/chart.js"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
+      <a class="navbar-brand me-0" href="/">
+        <i class="fas fa-home me-2"></i>首页
+      </a>
+      <a class="navbar-brand me-0 active" href="#">
+        <i class="fas fa-users me-2"></i>多人成绩预测
+      </a>
+    </nav>
+
+    <main class="d-flex flex-column gap-4 p-4 align-items-center">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-8">
+            <!-- 文件上传 -->
+            <div class="card mb-4">
+              <div class="card-body">
+                <h5 class="card-title mb-4">
+                  <i class="fas fa-file-excel me-2"></i>上传Excel文件
+                </h5>
+                <form enctype="multipart/form-data" method="post" action="/batch">
+                  <div class="text-center">
+                    <div class="mb-3">
+                      <label class="form-label" for="videoUpload">
+                        <i class="fas fa-file-excel me-2"></i>选择 <b>Excel</b> <code>(.xls / .xlsx)</code> 文件
+                      </label>
+                      <input type="file" class="form-control" name="file" accept=".xls,.xlsx" required />
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                      <i class="fas fa-upload me-2"></i>提交
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- 结果显示 -->
+            {% if head_list %}
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title mb-4">
+                  <i class="fas fa-chart-bar me-2"></i>预测结果
+                </h5>
+                <div class="table-responsive">
+                  <table class="table table-bordered table-hover">
+                    <thead>
+                      <tr>
+                        <th style="text-align: center">序号</th>
+                        {# 过滤掉"投入性解释"这一列 #}
+                        {% for head in head_list if head != '投入性解释' %}
+                          <th style="text-align: center">{{ head }}</th>
+                        {% endfor %}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for results in result_list[:50] %}
+                      <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ results[0] }}</td>
+                        <td>{{ results[1] }}</td>
+                        <td>{{ results[2] }}</td>
+                        <td>{{ results[3] }}</td>
+                        <td>{{ results[4] }}</td>
+                        <td>{{ results[5] }}</td>
+                        <!-- 投入性列，tooltip显示解释 -->
+                        <td title="{{ results[7] }}" data-bs-toggle="tooltip" data-bs-placement="top">
+                          {% if results[6] =='低投入性' %}
+                            <span class="status-low">{{ results[6] }}</span>
+                          {% elif results[6] =='中低投入性' %}
+                            <span class="status-mid-low">{{ results[6] }}</span>
+                          {% elif results[6] =='中投入性' %}
+                            <span class="status-medium">{{ results[6] }}</span>
+                          {% elif results[6] =='中高投入性' %}
+                            <span class="status-mid-high">{{ results[6] }}</span>
+                          {% else %}
+                            <span class="status-high">{{ results[6] }}</span>
+                          {% endif %}
+                        </td>
+                        <td>{{ results[8] }}</td>
+                        <td>
+                          {% if results[9] =='不及格' %}
+                            <span class="status-low">{{ results[9] }}</span>
+                          {% elif results[9] == '及格' %}
+                            {{ results[9] }}
+                          {% elif results[9] =='良' %}
+                            <span class="status-medium">{{ results[9] }}</span>
+                          {% else %}
+                            <span class="status-high">{{ results[9] }}</span>
+                          {% endif %}
+                        </td>
+                      </tr>
+                      {% endfor %}
+
+                      <tbody class="collapse" id="moreResults">
+                        {% for results in result_list[50:] %}
+                        <tr>
+                          <td>{{ loop.index + 50 }}</td>
+                          <td>{{ results[0] }}</td>
+                          <td>{{ results[1] }}</td>
+                          <td>{{ results[2] }}</td>
+                          <td>{{ results[3] }}</td>
+                          <td>{{ results[4] }}</td>
+                          <td>{{ results[5] }}</td>
+                          <!-- 投入性列，tooltip显示解释 -->
+                          <td title="{{ results[7] }}" data-bs-toggle="tooltip" data-bs-placement="top">
+                            {% if results[6] =='低投入性' %}
+                              <span class="status-low">{{ results[6] }}</span>
+                            {% elif results[6] =='中低投入性' %}
+                              <span class="status-mid-low">{{ results[6] }}</span>
+                            {% elif results[6] =='中投入性' %}
+                              <span class="status-medium">{{ results[6] }}</span>
+                            {% elif results[6] =='中高投入性' %}
+                              <span class="status-mid-high">{{ results[6] }}</span>
+                            {% else %}
+                              <span class="status-high">{{ results[6] }}</span>
+                            {% endif %}
+                          </td>
+                          <td>{{ results[8] }}</td>
+                          <td>
+                            {% if results[9] =='不及格' %}
+                              <span class="status-low">{{ results[9] }}</span>
+                            {% elif results[9] == '及格' %}
+                              {{ results[9] }}
+                            {% elif results[9] =='良' %}
+                              <span class="status-medium">{{ results[9] }}</span>
+                            {% else %}
+                              <span class="status-high">{{ results[9] }}</span>
+                            {% endif %}
+                          </td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </tbody>
+                  </table>
+                </div>
+
+                {% if result_list|length > 50 %}
+                <div class="text-center mt-3">
+                  <button class="btn btn-primary collapse-btn" type="button"
+                          data-bs-toggle="collapse" data-bs-target="#moreResults"
+                          aria-expanded="false">
+                    <i class="fas fa-chevron-down me-2 collapse-icon"></i>
+                    <span class="collapse-text">显示更多数据</span>
+                  </button>
+                </div>
+                {% endif %}
+
+                <!-- 统计图表 -->
+                <div class="row mt-4">
+                  <div class="col-md-6">
+                    <div class="chart-card">
+                      <h5 class="chart-title">
+                        <i class="fas fa-chart-pie me-2"></i>投入性分布
+                      </h5>
+                      <div class="chart-wrapper">
+                        <canvas id="investmentChart"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="chart-card">
+                      <h5 class="chart-title">
+                        <i class="fas fa-chart-pie me-2"></i>成绩等级分布
+                      </h5>
+                      <div class="chart-wrapper">
+                        <canvas id="gradeChart"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- 初始化 Bootstrap tooltip -->
+    <script>
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+      });
+    </script>
+
+    <!-- 使用 Bootstrap collapse 插件控制折叠 -->
+    <script>
+      $(document).ready(function() {
+        const collapseBtn = $('.collapse-btn');
+        const collapseTarget = $('#moreResults');
+
+        collapseBtn.on('click', function() {
+          // 切换 collapse 状态
+          collapseTarget.collapse('toggle');
+
+          const isExpanded = collapseTarget.hasClass('show');
+          const collapseText = collapseBtn.find('.collapse-text');
+          const collapseIcon = collapseBtn.find('.collapse-icon');
+
+          if (isExpanded) {
+            collapseText.text('收起数据');
+            collapseIcon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+          } else {
+            collapseText.text('显示更多数据');
+            collapseIcon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+          }
+        });
+      });
+    </script>
+
+    <!-- 图表初始化脚本 -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        {% if stats %}
+          const statsData = {{ stats|safe }};
+
+          // 投入性饼图
+          new Chart(document.getElementById('investmentChart'), {
+            type: 'pie',
+            data: {
+              labels: Object.keys(statsData.investment),
+              datasets: [{
+                data: Object.values(statsData.investment),
+                backgroundColor: ['#dc3545', '#fd7e14', '#ffc107', '#20c997', '#6f42c1'],
+                borderWidth: 1
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  position: 'bottom'
+                }
+              }
+            }
+          });
+
+          // 成绩等级饼图
+          new Chart(document.getElementById('gradeChart'), {
+            type: 'pie',
+            data: {
+              labels: Object.keys(statsData.grade),
+              datasets: [{
+                data: Object.values(statsData.grade),
+                backgroundColor: ['#dc3545', '#ffc107', '#198754', '#6f42c1'],
+                borderWidth: 1
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  position: 'bottom'
+                }
+              }
+            }
+          });
+        {% endif %}
+      });
+    </script>
+  </body>
+</html>
