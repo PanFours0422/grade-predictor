@@ -117,6 +117,3 @@ grade-predictor/
 3. 提交你的更改 (`git commit -m '添加某某功能'`)
 4. 推送到分支 (`git push origin feature/amazing-feature`)
 5. 创建一个Pull Request
-
-## 许可证
-[请根据项目实际情况添加许可证] 
